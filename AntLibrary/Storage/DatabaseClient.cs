@@ -2,11 +2,14 @@
 
 using MySql.Data.MySqlClient;
 
+using AntLibrary.Util;
+
 namespace AntLibrary.Storage
 {
     class DatabaseClient : IDisposable
     {
         private MySqlConnection _connection;
+        private MySqlCommand _command;
         private uint _id;
 
         public DatabaseClient(uint id, MySqlConnection connection)
@@ -18,6 +21,21 @@ namespace AntLibrary.Storage
         public void Dispose()
         {
             //TODO Poke database manager "IM DONE"
+        }
+
+        public void AddParameter(string id, object value)
+        {
+            try
+            {
+                if (_command == null)
+                    _command = _connection.CreateCommand();
+
+                _command.Parameters.Add(new MySqlParameter(id, value));
+            }
+            catch (Exception e)
+            {
+                Logging.LogEvent("DatabaseClient", string.Format("Error adding parameter to client #{0} : {1}", _id, e.Message), Logging.ELogLevel.ERROR);
+            }
         }
     }
 }
