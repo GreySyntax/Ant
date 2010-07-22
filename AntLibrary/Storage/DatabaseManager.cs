@@ -66,12 +66,12 @@ namespace AntLibrary.Storage
         }
 
         public void SetRunning(bool value, bool soft)
-        {
+		{
+			if (!value && !soft)
+				StopManager();
+			
             _running = value;
-
-            if (!_running && !soft)
-                StopManager();
-        }
+		}
 
         public bool StartManager()
         {
@@ -119,15 +119,18 @@ namespace AntLibrary.Storage
         }
 
         public void StopManager()
-        {
-            uint[] clients = new uint[_clients.Count];
-            _clients.Keys.CopyTo(clients, 0);
+        {		
+			if (_running)
+			{
+				Logging.LogEvent("DatabaseManager", "Shutting down DatabaseManager", Logging.ELogLevel.INFO);
+            	uint[] clients = new uint[_clients.Count];
+           		_clients.Keys.CopyTo(clients, 0);
 
-            foreach (uint id in clients)
-                Stop(id);
-
-            if (_running)
-                SetRunning(false, true);
+            	foreach (uint id in clients)
+                	Stop(id);
+				
+				SetRunning(false, true);
+			}
         }
 
         public uint Connect(bool temporary)

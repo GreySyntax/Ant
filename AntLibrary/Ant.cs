@@ -57,8 +57,8 @@ namespace AntLibrary
             Console.Title = "Ant IRCd";
             Console.CursorVisible = false;
 
-            Console.WindowHeight = 50;
-            Console.WindowWidth = 150;
+            //Console.WindowHeight = 50;
+            //Console.WindowWidth = 150;
 
             Logging.WriteRaw("");
             Logging.WriteRaw("***");
@@ -75,19 +75,20 @@ namespace AntLibrary
 
             _databaseManager = new Storage.DatabaseManager(server, port, user, password, name, min, max);
             Logging.LogEvent("AntCore", "Created DatabaseManager", Logging.ELogLevel.INFO);
-            _databaseManager.StartManager();
-                        
+            _databaseManager.StartManager();               
         }
 
         public void StopAnt()
         {           
             _databaseManager.SetRunning(false);
-
+			_databaseManager = null;
+			
+			Logging.LogEvent("AntCore", "Destoryed DatabaseManager", Logging.ELogLevel.INFO);
             DateTime shutdown = DateTime.Now;
 
             Logging.LogEvent("AntCore", string.Format("Shutdown time {0}", shutdown.ToString()), Logging.ELogLevel.INFO);
             Logging.LogEvent("AntCore", string.Format("Uptime {0} ", shutdown.Subtract(_started)), Logging.ELogLevel.INFO);
-
+			
             Thread.Sleep(1000);
             Environment.Exit(1);
         }
