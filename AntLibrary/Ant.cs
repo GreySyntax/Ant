@@ -52,7 +52,7 @@ namespace AntLibrary
             Console.Title = "Ant IRCd";
             Console.CursorVisible = false;
 
-            Console.WindowHeight = 500;
+            Console.WindowHeight = 50;
             Console.WindowWidth = 100;
 
             Logging.WriteRaw("");

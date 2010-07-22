@@ -9,6 +9,9 @@ namespace Ant
     {
         static void Main(string[] args)
         {
+            AntLibrary.Ant.Get().StartAnt();
+
+            AntLibrary.Ant.Get().IsRunning = false;
         }
     }
 }
