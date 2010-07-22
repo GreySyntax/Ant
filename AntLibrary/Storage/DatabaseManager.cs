@@ -191,8 +191,10 @@ namespace AntLibrary.Storage
 
                 Logging.LogEvent("DatabaseManager", string.Format("Destoryed DatabaseClient #{0}", id), Logging.ELogLevel.INFO);
 
-                _busy.Remove(id);
-                _temporary.Remove(id);
+                if (_busy.Contains(id))
+                    _busy.Remove(id);
+                if (_temporary.Contains(id))
+                    _temporary.Remove(id);
             }
         }
     }
