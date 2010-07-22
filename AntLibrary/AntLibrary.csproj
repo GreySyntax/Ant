@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\DatabaseClient.cs" />
     <Compile Include="Storage\DatabaseManager.cs" />
+    <Compile Include="Util\IManager.cs" />
     <Compile Include="Util\Logging.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
