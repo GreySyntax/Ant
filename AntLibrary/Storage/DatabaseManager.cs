@@ -8,7 +8,7 @@ using AntLibrary.Util;
 
 namespace AntLibrary.Storage
 {
-    class DatabaseManager : IManager
+    public class DatabaseManager : IManager
     {
         private bool _running;
 
@@ -100,7 +100,7 @@ namespace AntLibrary.Storage
 
             uint e = 0;
 
-            while (_min >= _clients.Count && 5 >= e)
+            while (_min > _clients.Count && 5 >= e)
             {
                 uint id = Connect(false);
 
@@ -120,6 +120,11 @@ namespace AntLibrary.Storage
 
         public void StopManager()
         {
+            uint[] clients = new uint[_clients.Count];
+            _clients.Keys.CopyTo(clients, 0);
+
+            foreach (uint id in clients)
+                Stop(id);
 
             if (_running)
                 SetRunning(false, true);
@@ -153,6 +158,8 @@ namespace AntLibrary.Storage
 
                     _clients.Add(id, new DatabaseClient(id, connection));
 
+                    Logging.LogEvent("DatabaseManager", string.Format("Created DatabaseClient #{0}", id), Logging.ELogLevel.INFO);
+
                     if (temporary)
                         _temporary.Add(id);
 
@@ -161,15 +168,32 @@ namespace AntLibrary.Storage
             }
             catch (MySqlException e)
             {
-                Logging.LogEvent("DatabaseServer", string.Format("Failed to create DatabaseClient with error: {0}", e.Message), Logging.ELogLevel.WARNING);
+                Logging.LogEvent("DatabaseManager", string.Format("Failed to create DatabaseClient with error: {0}", e.Message), Logging.ELogLevel.WARNING);
 
                 if (id > 0)
                 {
                     //Remove
+                    Stop(id);
                 }
             }
 
             return id;
+        }
+
+        public void Stop(uint id)
+        {
+            if (_clients.ContainsKey(id))
+            {
+                DatabaseClient client = _clients[id];
+                _clients.Remove(id);
+
+                client.Close();
+
+                Logging.LogEvent("DatabaseManager", string.Format("Destoryed DatabaseClient #{0}", id), Logging.ELogLevel.INFO);
+
+                _busy.Remove(id);
+                _temporary.Remove(id);
+            }
         }
     }
 }

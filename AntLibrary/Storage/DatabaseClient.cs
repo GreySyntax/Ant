@@ -20,7 +20,13 @@ namespace AntLibrary.Storage
 
         public void Dispose()
         {
-            //TODO Poke database manager "IM DONE"
+            if (_command != null)
+            {
+                _command.Dispose();
+                _command = null;
+            }
+
+            //TODO Poke
         }
 
         public void AddParameter(string id, object value)
@@ -36,6 +42,17 @@ namespace AntLibrary.Storage
             {
                 Logging.LogEvent("DatabaseClient", string.Format("Error adding parameter to client #{0} : {1}", _id, e.Message), Logging.ELogLevel.ERROR);
             }
+        }
+
+        public void Close()
+        {
+            if (_command != null)
+            {
+                _command.Dispose();
+                _command = null;
+            }
+
+            _connection.Close();
         }
     }
 }
